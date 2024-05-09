@@ -1,7 +1,20 @@
 # Netflix-GPT
 
-Create react-app
-Configured TailwindCSS
+-Create react-app
+-Configured TailwindCSS
+-Header
+-Routing of Apps
+-Login Form
+-Sign up Form
+-Form Validation
+-useRef Hook
+-Firebase setup
+-Deploying app to production
+-Create Sign-Up user Account
+-Implement Sign-In user API
+-Created Redux store with useSlice
+-Implemented Sign-out
+-Update Profile
 
 # Features
 -Login/Sign-Up
