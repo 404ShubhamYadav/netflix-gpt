@@ -15,7 +15,13 @@
 -Created Redux store with useSlice
 -Implemented Sign-out
 -Update Profile
-
+-Fetch from TMDB Movies
+-Bugfix: if the user is not logged-in redirect /browse page to Login page and vise-versa
+-Register TMDB API & create an app & get access token
+-Get data from TMDB now playing movies list API
+-Custom hooks for now playing movies and Trailer
+-Update the store with trailer video
+-Embedded the Utube video and make it autoplay
 # Features
 -Login/Sign-Up
     -Login/Sign Up form
