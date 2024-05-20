@@ -22,6 +22,11 @@
 -Custom hooks for now playing movies and Trailer
 -Update the store with trailer video
 -Embedded the Utube video and make it autoplay
+-Build Secondary Component
+-Build Movie List
+-Build Movie Card
+-TMDB Image CDN URL
+-usePopularMovies Custom hook
 # Features
 -Login/Sign-Up
     -Login/Sign Up form
