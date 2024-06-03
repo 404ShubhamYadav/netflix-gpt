@@ -26,7 +26,11 @@
 -Build Movie List
 -Build Movie Card
 -TMDB Image CDN URL
--usePopularMovies Custom hook
+-usePopularMovies Custom 
+-GPT Search Page
+-GPT search Bar
+-Multi-language feature in our app
+
 # Features
 -Login/Sign-Up
     -Login/Sign Up form
