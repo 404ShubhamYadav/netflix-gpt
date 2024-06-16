@@ -30,6 +30,8 @@
 -GPT Search Page
 -GPT search Bar
 -Multi-language feature in our app
+-Memoization
+-Made our site Responsive
 
 # Features
 -Login/Sign-Up
