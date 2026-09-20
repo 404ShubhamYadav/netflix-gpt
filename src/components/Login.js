@@ -1,14 +1,15 @@
 import React, { useRef, useState } from 'react'
 import Header from './Header';
 import { checkValidData } from '../utils/validate';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from '../utils/firebase';
+import apiClient from '../utils/apiClient';
 import { useDispatch } from 'react-redux';
 import { addUser } from '../utils/userSlice';
-import { BG_URL, User_AVATAR } from '../utils/constant';
+import { useNavigate } from 'react-router-dom';
+import { BG_URL } from '../utils/constant';
 
 const Login = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isSignForm, setIsSignForm] = useState(true);
   const [errMessage, setErrMessage] = useState(null);
 
@@ -16,61 +17,39 @@ const Login = () => {
   const email = useRef(null);
   const password = useRef(null);
 
-  const handleButtonClick = () => {
-    // Either we can use state variables or useRef hook for checking valid email and password
-    // you have reference to input box if you want to check what is there in the I/P box
-    // console.log(email.current.value);
-    // console.log(password.current.value);
+  const handleButtonClick = async () => {
     const message = checkValidData(email.current.value, password.current.value);
     setErrMessage(message);
 
     if (message) return;
 
-    if (!isSignForm) {
-      // Sign-Up logic
-      createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          updateProfile(user, {
-            displayName: name.current.value,
-            photoURL: User_AVATAR,
-          })
-            .then(() => {
-              // We want all below detals from updated users thats why we are fetching from auth.currentUser not from user
-              const { uid, email, displayName, photoURL } = auth.currentUser;
-              dispatch(
-                addUser({
-                  uid: uid,
-                  email: email,
-                  displayName: displayName,
-                  photoURL: photoURL
-                }))
-
-            }).catch((error) => {
-              setErrMessage(error.message);
-            });
-        })
-
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setErrMessage(errorCode + "-" + errorMessage);
+    try {
+      if (!isSignForm) {
+        // Sign-Up
+        const res = await apiClient.post("/auth/register", {
+          name: name.current.value,
+          email: email.current.value,
+          password: password.current.value,
         });
-      //  Sign- logic
-    } else {
-      signInWithEmailAndPassword(auth, email.current.value, password.current.value)
-        .then((userCredential) => {
-          // Signed in 
-          const user = userCredential.user;
-          console.log(user);
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setErrMessage(errorCode + "-" + errorMessage);
+        localStorage.setItem("token", res.data.token);
+        dispatch(addUser(res.data.user));
+        navigate("/browser");
+      } else {
+        // Sign-In
+        const res = await apiClient.post("/auth/login", {
+          email: email.current.value,
+          password: password.current.value,
         });
+        localStorage.setItem("token", res.data.token);
+        dispatch(addUser(res.data.user));
+        navigate("/browser");
+      }
+    } catch (error) {
+      const message = error.response?.data?.message || "Something went wrong. Please try again.";
+      setErrMessage(message);
     }
   }
+
   const toggleSignInForm = () => {
     setIsSignForm(!isSignForm);
   }

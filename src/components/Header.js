@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from '../utils/firebase';
+import apiClient from '../utils/apiClient';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser, removeUser } from '../utils/userSlice';
@@ -11,42 +10,36 @@ import { changeLanguage } from '../utils/configSlice';
 const Header = () => {
   const dispatch = useDispatch();
   const user = useSelector((store) => store.user);
-  const showGptSearch = useSelector((store)=>store.gpt.showGptSearch);
+  const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const unsubuscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const { uid, email, displayName, photoURL } = user;
-        dispatch(
-          addUser({
-            uid: uid,
-            email: email,
-            displayName: displayName,
-            photoURL: photoURL
-          })
-        );
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      dispatch(removeUser());
+      return;
+    }
+
+    apiClient.get("/users/me")
+      .then((res) => {
+        dispatch(addUser(res.data));
         navigate("/browser");
-      } else {
+      })
+      .catch(() => {
+        localStorage.removeItem("token");
         dispatch(removeUser());
         navigate("/");
-      }
-    });
-
-    // Unsubscribe when component unmounts
-    return () => unsubuscribe();
+      });
   }, []);
 
   const handleSignOut = () => {
-    signOut(auth)
-      .then(() => { })
-      .catch((error) => {
-        navigate("/error");
-      });
+    localStorage.removeItem("token");
+    dispatch(removeUser());
+    navigate("/");
   }
 
   const handleGptSearchClick = () => {
-    // Toggle GPT Search
     dispatch(toggleSearchView());
   }
 
@@ -55,7 +48,7 @@ const Header = () => {
   }
 
   return (
-    <div className='absolute w-screen px-6 py-2 bg-gradient-to-b from-black z-10 flex flex-col md:flex-row justify-between'>
+    <div className='absolute w-screen px-6 py-2 bg-gradient-to-b from-black z-50 flex flex-col md:flex-row justify-between'>
       <img className='w-44 mx-auto md:mx-0' src={LOGO} alt='logo' />
       {user && (
         <div className='flex p-2'>
@@ -72,12 +65,11 @@ const Header = () => {
             onClick={handleGptSearchClick}>
             {showGptSearch ? "Homepage" : "GPT Search"}
           </button>
-          <img className='w-12 h-12' src={user?.photoURL} alt="userIcon" />
+          <span className='text-white font-bold self-center mx-2'>{user?.name}</span>
           <button onClick={handleSignOut} className='font-bold text-white'>(Sign Out)</button>
         </div>
       )}
     </div>
-
   )
 }
 

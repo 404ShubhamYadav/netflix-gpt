@@ -1,17 +1,28 @@
 import React from 'react'
 import Header from './Header';
-import useNowPlayingMovies from '../hooks/useNowPlayingMovies';
+import useMovieList from '../hooks/useMovieList';
+import ChatBotWidget from './ChatBotWidget';
+import useNowPlayingVideos from '../hooks/useNowPlayingVideos';
 import MainContainer from './MainContainer';
 import SecondaryCon from './SecondaryCon';
-import usePopularMovies from '../hooks/usePopularMovies';
 import GptSearch from './GptSearch';
 import { useSelector } from 'react-redux';
+import {
+  addNowPlayingMovies,
+  addPopularMovies,
+  addTrendingMovies,
+  addTopRatedMovies,
+  addUpcomingMovies,
+} from '../utils/movieSlice';
 
 const Browse = () => {
   const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
 
-  useNowPlayingMovies();
-  usePopularMovies();
+  useMovieList("/movies/now-playing?limit=8", addNowPlayingMovies, "nowPlayingMovies");
+  useMovieList("/movies/popular?limit=8", addPopularMovies, "popularMovies");
+  useMovieList("/movies/trending?limit=8", addTrendingMovies, "trendingMovies");
+  useMovieList("/movies/top-rated?limit=8", addTopRatedMovies, "topRatedMovies");
+  useMovieList("/movies/upcoming?limit=8", addUpcomingMovies, "upcomingMovies");
 
   return (
     <div>
@@ -24,15 +35,7 @@ const Browse = () => {
           <SecondaryCon />
         </>
       )}
-
-      {/* 
-          MainContainer
-            -VideoTitle
-            -VideoBackground
-          Secondary Container
-            -MoviesList*n
-                cards*n
-      */}
+      <ChatBotWidget />
     </div>
   )
 }
