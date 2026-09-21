@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: "/api",
+  baseURL: "https://netflixgptbackend.duckdns.org/api",
 });
 
 apiClient.interceptors.request.use((config) => {
