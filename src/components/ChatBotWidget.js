@@ -41,7 +41,7 @@ const ChatBotWidget = () => {
   return (
     <div className="fixed bottom-6 right-6 z-50">
       {isOpen ? (
-        <div className="w-80 md:w-96 h-[28rem] bg-gray-900 border border-gray-700 rounded-lg shadow-2xl flex flex-col overflow-hidden">
+        <div className="w-[92vw] max-w-sm md:w-96 h-[28rem] bg-gray-900 border border-gray-700 rounded-lg shadow-2xl flex flex-col overflow-hidden">
           <div className="bg-red-700 text-white px-4 py-3 flex justify-between items-center">
             <span className="font-bold">Movie Assistant</span>
             <button onClick={() => setIsOpen(false)} className="text-white text-xl leading-none">×</button>
